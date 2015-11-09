@@ -14,6 +14,7 @@ class Viaje {
 	new(Cliente cliente) {
 		this.pasajero = cliente
 		this.estado = EstadoViaje.Solicitado
+
 		//FIXME aca le hago llegar el mock
 		this.notificador = cliente.notificador
 		this.notificarTaxiMasCercano()
@@ -38,14 +39,28 @@ class Viaje {
 			notificador.notificarViajeRechazo(pasajero)
 		}
 	}
-	
-	def aceptado(Taxi taxiQueAcepto){
+
+	def aceptado(Taxi taxiQueAcepto) {
 		this.estado = EstadoViaje.Aceptado
 		this.taxista = taxiQueAcepto
-		notificador.notificarViajeAceptado(pasajero,this)
+		notificador.notificarViajeAceptado(pasajero, this)
 	}
-	
-	def ubicacionTaxi(){
+
+	def ubicacionTaxi() {
 		return taxista.ubicacion
+	}
+
+	def cancelarTaxi() {
+		this.estado = EstadoViaje.Cancelado
+		notificador.notificarCancelacionACliente(pasajero)
+	}
+
+	def cancelarPasajero() {
+
+		if (this.estado == EstadoViaje.Aceptado) {
+			notificador.notificarCancelacionATaxi(taxista)
+		}
+
+		this.estado = EstadoViaje.Cancelado
 	}
 }

@@ -3,8 +3,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.After
 import org.junit.Assert
-import java.util.regex.Matcher
-import org.mockito.internal.matchers.Matches
+
 
 class TestViajesAceptados {
 	var pasajero = new Cliente()
@@ -14,9 +13,6 @@ class TestViajesAceptados {
 	var granBsAs = new Area()
 	var zonaOeste = new Area()
 	var capitalFdral = new Area()
-	var moreno = new Ubicacion()
-	var pasoDelRey = new Ubicacion()
-	var flores = new Ubicacion()
 	var mockSistemaGeografico = mock(typeof(SistemaGeografico))
 	var mockNotificador = mock(typeof(Notificador))
 
@@ -51,7 +47,7 @@ class TestViajesAceptados {
 
 	@Test
 	def void TestClientePideViaje() {
-		var viaje = pasajero.solicitarViaje()
+		pasajero.solicitarViaje()
 		verify(mockNotificador, times(1)).notificarNuevoViaje(any(Taxi), any(Viaje))
 	}
 

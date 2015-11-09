@@ -1,4 +1,4 @@
 
 public enum EstadoViaje {
-Solicitado,Aceptado,Rechazado
+Solicitado,Aceptado,Rechazado,Cancelado
 }
