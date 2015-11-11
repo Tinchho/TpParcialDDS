@@ -22,10 +22,17 @@ class TestViajesAceptados {
 		RepoTaxis.getInstance.sistemaGeo = mockSistemaGeografico
 
 		zonaOeste.padre = granBsAs
-
+		
+		pasajero.telefono = 147258
 		taxi1.estado = EstadoTaxi.Libre
+		taxi1.telefono = 123456
+		taxi1.notificador =mockNotificador
 		taxi2.estado = EstadoTaxi.Libre
+		taxi2.telefono = 654321
+		taxi2.notificador =mockNotificador
 		taxi3.estado = EstadoTaxi.Libre
+		taxi3.telefono = 456789
+		taxi3.notificador =mockNotificador
 
 		RepoTaxis.getInstance.agregar(taxi1)
 		RepoTaxis.getInstance.agregar(taxi2)
@@ -48,16 +55,20 @@ class TestViajesAceptados {
 	@Test
 	def void TestClientePideViaje() {
 		pasajero.solicitarViaje()
-		verify(mockNotificador, times(1)).notificarNuevoViaje(any(Taxi), any(Viaje))
+		verify(mockNotificador, times(1)).notificar(any(int), any(String))
 	}
 
 	@Test
 	def void TestClientePideViajeYAceptaUnTaxi() {
 		var viaje = pasajero.solicitarViaje()
-		taxi2.aceptarViaje(viaje)
+		
+		//Verfico que se notifico al primer taxi
+		verify(mockNotificador, times(1)).notificar(any(int), any(String))
+		
+		taxi2.aceptarViaje()
 		
 		//Verfico que se notifico al cliente que se acepto el viaje
-		verify(mockNotificador, times(1)).notificarViajeAceptado(pasajero, viaje)
+		verify(mockNotificador, times(2)).notificar(any(int), any(String))
 		
 		//Verifico el estado del viaje
 		Assert.assertEquals(viaje.estado,EstadoViaje.Aceptado)
@@ -71,22 +82,22 @@ class TestViajesAceptados {
 		var viaje = pasajero.solicitarViaje()
 		
 		//Verifico que haya solo 2 de los 3 taxis estan en mi area
-		Assert.assertEquals(viaje.taxisPosibles.length, 2)
+		Assert.assertEquals(pasajero.viajeActual.taxisPosibles.length, 2)
 		
 		//Verfico que la lista en este en orden, el mas cercano era el taxi2 como dije antes
 		Assert.assertEquals(viaje.taxisPosibles.get(0), taxi2)
 		Assert.assertEquals(viaje.taxisPosibles.get(1), taxi1)
 		
 		//Verfico que se haya notificado al taxi2 primero
-		verify(mockNotificador, times(1)).notificarNuevoViaje(taxi2, viaje)
+		verify(mockNotificador, times(1)).notificar(any(int), any(String))
 		
 		//Taxi2 rechaza y se verifca que se notifique al taxi1 que es el siguiente mas cercano
-		taxi2.rechazarViaje(viaje)
-		verify(mockNotificador, times(1)).notificarNuevoViaje(taxi1, viaje)
+		taxi2.rechazarViaje()
+		verify(mockNotificador, times(2)).notificar(any(int), any(String))
 		
 		//Taxi1 acepta el viaje y verifico que se notifique al cliente
-		taxi1.aceptarViaje(viaje)
-		verify(mockNotificador, times(1)).notificarViajeAceptado(pasajero, viaje)
+		taxi1.aceptarViaje()
+		verify(mockNotificador, times(3)).notificar(any(int), any(String))
 		Assert.assertEquals(viaje.taxisPosibles.length,1)
 
 	}

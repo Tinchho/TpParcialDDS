@@ -28,7 +28,10 @@ public class TestViajesCancelados {
     this.pasajero.setNotificador(this.mockNotificador);
     RepoTaxis _instance = RepoTaxis.getInstance();
     _instance.setSistemaGeo(this.mockSistemaGeografico);
+    this.pasajero.setTelefono(147258);
     this.taxi1.setEstado(EstadoTaxi.Libre);
+    this.taxi1.setTelefono(123456);
+    this.taxi1.setNotificador(this.mockNotificador);
     RepoTaxis _instance_1 = RepoTaxis.getInstance();
     _instance_1.agregar(this.taxi1);
     Ubicacion _any = Matchers.<Ubicacion>any(Ubicacion.class);
@@ -62,15 +65,17 @@ public class TestViajesCancelados {
     List<Taxi> _taxisPosibles = viaje.getTaxisPosibles();
     int _length = ((Object[])Conversions.unwrapArray(_taxisPosibles, Object.class)).length;
     Assert.assertEquals(_length, 1);
-    this.taxi1.aceptarViaje(viaje);
+    this.taxi1.aceptarViaje();
     EstadoViaje _estado = viaje.getEstado();
     Assert.assertEquals(_estado, EstadoViaje.Aceptado);
     this.pasajero.cancelarViaje();
     EstadoViaje _estado_1 = viaje.getEstado();
     Assert.assertEquals(_estado_1, EstadoViaje.Cancelado);
-    VerificationMode _times = Mockito.times(1);
+    VerificationMode _times = Mockito.times(3);
     Notificador _verify = Mockito.<Notificador>verify(this.mockNotificador, _times);
-    _verify.notificarCancelacionATaxi(this.taxi1);
+    Integer _any = Matchers.<Integer>any(int.class);
+    String _any_1 = Matchers.<String>any(String.class);
+    _verify.notificar((_any).intValue(), _any_1);
   }
   
   @Test
@@ -79,14 +84,16 @@ public class TestViajesCancelados {
     List<Taxi> _taxisPosibles = viaje.getTaxisPosibles();
     int _length = ((Object[])Conversions.unwrapArray(_taxisPosibles, Object.class)).length;
     Assert.assertEquals(_length, 1);
-    this.taxi1.aceptarViaje(viaje);
+    this.taxi1.aceptarViaje();
     EstadoViaje _estado = viaje.getEstado();
     Assert.assertEquals(_estado, EstadoViaje.Aceptado);
     this.taxi1.cancelarViaje();
     EstadoViaje _estado_1 = viaje.getEstado();
     Assert.assertEquals(_estado_1, EstadoViaje.Cancelado);
-    VerificationMode _times = Mockito.times(1);
+    VerificationMode _times = Mockito.times(3);
     Notificador _verify = Mockito.<Notificador>verify(this.mockNotificador, _times);
-    _verify.notificarCancelacionACliente(this.pasajero);
+    Integer _any = Matchers.<Integer>any(int.class);
+    String _any_1 = Matchers.<String>any(String.class);
+    _verify.notificar((_any).intValue(), _any_1);
   }
 }

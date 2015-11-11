@@ -7,6 +7,8 @@ class Taxi {
 	Ubicacion ubicacion
 	EstadoTaxi estado
 	Viaje viajeActual
+	Notificador notificador
+	int telefono
 	
 	def actualizarUbicacion(int latitud, int longitud){
 		this.ubicacion.latitud = latitud
@@ -17,19 +19,30 @@ class Taxi {
 		this.estado = EstadoTaxi.Ocupado
 	}
 	
-	def aceptarViaje(Viaje viaje){
-		this.estado = EstadoTaxi.Ocupado
+	def notificarNuevoViaje(Viaje viaje){
 		this.viajeActual = viaje
-		viaje.aceptado(this)
+		notificador.notificar(this.telefono,"Nuevo viaje en la zona")
 	}
 	
-	def rechazarViaje(Viaje viaje){
-		viaje.notificarSiguienteMasCercano(this)
+	def aceptarViaje(){
+		this.estado = EstadoTaxi.Ocupado
+		this.viajeActual.aceptado(this)
 	}
+	
+	def rechazarViaje(){
+		this.viajeActual.taxisPosibles.remove(this)
+		this.viajeActual.notificarTaxiMasCercano()
+		viajeActual = null;	
+	}
+	
 	
 	def cancelarViaje(){
+		viajeActual.cancelarTaxi()
+	}
+	
+	def notificarCancelacion(){
 		this.estado = EstadoTaxi.Libre
-		this.viajeActual.cancelarTaxi()
+		notificador.notificar(this.telefono,"El pasajero cancelo el viaje")
 		viajeActual = null;
 		
 	}

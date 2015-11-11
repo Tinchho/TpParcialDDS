@@ -18,7 +18,10 @@ class TestViajesCancelados {
 		pasajero.notificador = mockNotificador
 		RepoTaxis.getInstance.sistemaGeo = mockSistemaGeografico
 
+		pasajero.telefono = 147258
 		taxi1.estado = EstadoTaxi.Libre
+		taxi1.telefono = 123456
+		taxi1.notificador =mockNotificador
 
 		RepoTaxis.getInstance.agregar(taxi1)
 
@@ -59,7 +62,7 @@ class TestViajesCancelados {
 		Assert.assertEquals(viaje.taxisPosibles.length, 1)
 
 		//Acepta el viaje
-		taxi1.aceptarViaje(viaje)
+		taxi1.aceptarViaje()
 
 		//Verifico el estado del viaje
 		Assert.assertEquals(viaje.estado, EstadoViaje.Aceptado)
@@ -70,8 +73,8 @@ class TestViajesCancelados {
 		//Verifico el estado del viaje nuevamente
 		Assert.assertEquals(viaje.estado, EstadoViaje.Cancelado)
 		
-		//Verfirico que se notifique al taxista
-		verify(mockNotificador, times(1)).notificarCancelacionATaxi(taxi1)
+		//Verfirico que se notifique al taxista (3 por que una es de solicitar otra de aceptar y otra de cancelar)
+		verify(mockNotificador, times(3)).notificar(any(int),any(String))
 
 	}
 	
@@ -84,7 +87,7 @@ class TestViajesCancelados {
 		Assert.assertEquals(viaje.taxisPosibles.length, 1)
 
 		//Acepta el viaje
-		taxi1.aceptarViaje(viaje)
+		taxi1.aceptarViaje()
 
 		//Verifico el estado del viaje
 		Assert.assertEquals(viaje.estado, EstadoViaje.Aceptado)
@@ -96,7 +99,7 @@ class TestViajesCancelados {
 		Assert.assertEquals(viaje.estado, EstadoViaje.Cancelado)
 		
 		//Verfirico que se notifique al cliente
-		verify(mockNotificador, times(1)).notificarCancelacionACliente(pasajero)
+		verify(mockNotificador, times(3)).notificar(any(int),any(String))
 
 	}
 }

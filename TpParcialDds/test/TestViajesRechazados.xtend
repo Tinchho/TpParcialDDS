@@ -19,7 +19,10 @@ class TestViajesRechazados {
 		pasajero.notificador = mockNotificador
 		RepoTaxis.getInstance.sistemaGeo = mockSistemaGeografico
 
+		pasajero.telefono = 147258
 		taxi1.estado = EstadoTaxi.Libre
+		taxi1.telefono = 123456
+		taxi1.notificador =mockNotificador
 
 		RepoTaxis.getInstance.agregar(taxi1)
 
@@ -45,7 +48,7 @@ class TestViajesRechazados {
 		Assert.assertEquals(viaje.estado, EstadoViaje.Rechazado)
 
 		//Verifico que se notifique al cliente
-		verify(mockNotificador, times(1)).notificarViajeRechazo(pasajero)
+		verify(mockNotificador, times(1)).notificar(any(int),any(String))
 	}
 	
 	
@@ -59,10 +62,10 @@ class TestViajesRechazados {
 		Assert.assertEquals(viaje.taxisPosibles.length, 1)
 		
 		//El taxi rechaza el viaje
-		taxi1.rechazarViaje(viaje)
+		taxi1.rechazarViaje()
 		
 		//Verifico que se rechaza el viaje
-		verify(mockNotificador, times(1)).notificarViajeRechazo(pasajero)
+		verify(mockNotificador, times(2)).notificar(any(int),any(String))
 		Assert.assertEquals(viaje.estado, EstadoViaje.Rechazado)
 	}
 

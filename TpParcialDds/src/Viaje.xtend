@@ -8,42 +8,28 @@ class Viaje {
 	Taxi taxista
 	double costo
 	EstadoViaje estado
-	Notificador notificador
 	List<Taxi> taxisPosibles = new ArrayList<Taxi>()
 
 	new(Cliente cliente) {
 		this.pasajero = cliente
 		this.estado = EstadoViaje.Solicitado
-
-		//FIXME aca le hago llegar el mock
-		this.notificador = cliente.notificador
+		this.taxisPosibles = RepoTaxis.getInstance.obtenerTaxisEnAreaOrdenados(pasajero)
 		this.notificarTaxiMasCercano()
 	}
 
-	def notificarTaxiMasCercano() {
-		this.taxisPosibles = RepoTaxis.getInstance.obtenerTaxisEnAreaOrdenados(pasajero)
+	def void notificarTaxiMasCercano() {
 		if (!(taxisPosibles.length == 0)) {
-			notificador.notificarNuevoViaje(taxisPosibles.get(0), this)
+			taxisPosibles.get(0).notificarNuevoViaje(this)
 		} else {
 			this.estado = EstadoViaje.Rechazado
-			notificador.notificarViajeRechazo(pasajero)
-		}
-	}
-
-	def notificarSiguienteMasCercano(Taxi taxiQueRechazo) {
-		taxisPosibles.remove(taxiQueRechazo)
-		if (!taxisPosibles.empty) {
-			notificador.notificarNuevoViaje(taxisPosibles.get(0), this)
-		} else {
-			this.estado = EstadoViaje.Rechazado
-			notificador.notificarViajeRechazo(pasajero)
+			this.pasajero.notificarViajeRechazado()
 		}
 	}
 
 	def aceptado(Taxi taxiQueAcepto) {
 		this.estado = EstadoViaje.Aceptado
 		this.taxista = taxiQueAcepto
-		notificador.notificarViajeAceptado(pasajero, this)
+		this.pasajero.notificarViajeAceptado()
 	}
 
 	def ubicacionTaxi() {
@@ -52,13 +38,13 @@ class Viaje {
 
 	def cancelarTaxi() {
 		this.estado = EstadoViaje.Cancelado
-		notificador.notificarCancelacionACliente(pasajero)
+		this.pasajero.notificarCancelacion()
 	}
 
 	def cancelarPasajero() {
 
 		if (this.estado == EstadoViaje.Aceptado) {
-			notificador.notificarCancelacionATaxi(taxista)
+			this.taxista.notificarCancelacion()
 		}
 
 		this.estado = EstadoViaje.Cancelado
